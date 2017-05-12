@@ -1,5 +1,17 @@
 require 'cairo'
 
+COLOR_FONT_R = 0.933
+COLOR_FONT_G = 0.905
+COLOR_FONT_B = 0.894
+
+COLOR_PRIMARY_R = 0.784
+COLOR_PRIMARY_G = 0.431
+COLOR_PRIMARY_B = 0.267
+
+COLOR_SECONDARY_R = 0.4
+COLOR_SECONDARY_G = 0.612
+COLOR_SECONDARY_B = 0.4
+
 function init_cairo()
   if conky_window == nil then
     return false
@@ -17,7 +29,7 @@ function init_cairo()
   font = "Mono"
 
   cairo_select_font_face(cr, font, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL)
-  cairo_set_source_rgba(cr, 0.933,0.905,0.894,1)
+  cairo_set_source_rgba(cr, COLOR_FONT_R, COLOR_FONT_G, COLOR_FONT_B, 1)
   return true
 end
 
@@ -46,7 +58,7 @@ function conky_main()
   local radius = 110
   local half_radius = 0.05 + radius * math.sqrt(0.5) * 0.95
 
-  cairo_set_source_rgba(cr, 0.784, 0.431, 0.267, 1)
+  cairo_set_source_rgba(cr, COLOR_PRIMARY_R, COLOR_PRIMARY_G, COLOR_PRIMARY_B, 1)
   local cpu1 = 0.05 + math.sqrt(tonumber(conky_parse("${cpu cpu1}")) / 100.0) * 0.95
   local cpu2 = 0.05 + math.sqrt(tonumber(conky_parse("${cpu cpu2}")) / 100.0) * 0.95
   local cpu3 = 0.05 + math.sqrt(tonumber(conky_parse("${cpu cpu3}")) / 100.0) * 0.95
@@ -58,7 +70,7 @@ function conky_main()
   cairo_line_to(cr, cx, cy - radius * cpu4)
   cairo_fill(cr)
 
-  cairo_set_source_rgba(cr, 0.933,0.905,0.894,0.4)
+  cairo_set_source_rgba(cr, COLOR_FONT_R, COLOR_FONT_G, COLOR_FONT_B,0.4)
   cairo_set_line_width(cr, 1)
   cairo_move_to(cr, cx + radius, cy)
   cairo_rel_line_to(cr, -radius, radius)
@@ -85,7 +97,7 @@ function conky_main()
 
   -- PROCESSES
   
-  cairo_set_source_rgba(cr, 0.933,0.905,0.894,1)
+  cairo_set_source_rgba(cr, COLOR_FONT_R, COLOR_FONT_G, COLOR_FONT_B, 1)
   cairo_set_font_size(cr, 12)
   local ps_str = conky_parse("${exec ps -Ao comm,pcpu,%mem  --sort=-pcpu | head -n 15}")
   local processes = {}
@@ -111,10 +123,10 @@ function conky_main()
   local grid_width = 36
   for i = 1,40 do
     if (memperc > perc) then
-      cairo_set_source_rgba(cr, 0.784, 0.431, 0.267, 1)
+      cairo_set_source_rgba(cr, COLOR_PRIMARY_R, COLOR_PRIMARY_G, COLOR_PRIMARY_B, 1)
       cairo_arc(cr, cx, cy, grid_width / 2.7, 0, 2*math.pi)
     else
-      cairo_set_source_rgba(cr, 0.4, 0.612, 0.4, 1)
+      cairo_set_source_rgba(cr, COLOR_SECONDARY_R, COLOR_SECONDARY_G, COLOR_SECONDARY_B, 1)
       cairo_arc(cr, cx, cy, grid_width / 8.0, 0, 2*math.pi)
     end
     cairo_fill(cr)
@@ -176,17 +188,17 @@ function draw_volume(name, used, cx)
 
   cairo_set_line_width(cr, line_width)
 
-  cairo_set_source_rgba(cr, 0.933,0.905,0.894,1)
+  cairo_set_source_rgba(cr, COLOR_FONT_R, COLOR_FONT_G, COLOR_FONT_B, 1)
   draw_ellipse(cx, cy, width, height);
   cairo_stroke(cr)
 
-  cairo_set_source_rgba(cr, 0.933,0.905,0.894,1)
+  cairo_set_source_rgba(cr, COLOR_FONT_R, COLOR_FONT_G, COLOR_FONT_B, 1)
   draw_ellipse(cx, cy, width, height);
   cairo_stroke(cr)
 
   cairo_set_line_width(cr, line_width / 2)
 
-  cairo_set_source_rgba(cr, 0.933,0.905,0.894,1)
+  cairo_set_source_rgba(cr, COLOR_FONT_R, COLOR_FONT_G, COLOR_FONT_B, 1)
   cairo_move_to(cr, cx - line_width/2 + 1, cy + height/2)
   cairo_rel_line_to(cr, 0, -volume_height)
   cairo_stroke(cr)
@@ -197,31 +209,31 @@ function draw_volume(name, used, cx)
 
   cairo_set_line_width(cr, line_width)
 
-  cairo_set_source_rgba(cr, 0.4, 0.612, 0.4, 1)
+  cairo_set_source_rgba(cr, COLOR_SECONDARY_R, COLOR_SECONDARY_G, COLOR_SECONDARY_B, 1)
   cairo_rectangle(cr, cx, cy+height/2, width, -filled_height)
   cairo_fill(cr)
   
-  cairo_set_source_rgba(cr, 0.4, 0.612, 0.4, 1)
+  cairo_set_source_rgba(cr, COLOR_SECONDARY_R, COLOR_SECONDARY_G, COLOR_SECONDARY_B, 1)
   draw_ellipse(cx, cy, width, height);
   cairo_fill(cr)
 
-  cairo_set_source_rgba(cr, 0.933,0.905,0.894,1)
+  cairo_set_source_rgba(cr, COLOR_FONT_R, COLOR_FONT_G, COLOR_FONT_B, 1)
   draw_ellipse(cx, cy-filled_height, width, height);
   cairo_stroke(cr)
 
-  cairo_set_source_rgba(cr, 0.4, 0.612, 0.4, 1)
+  cairo_set_source_rgba(cr, COLOR_SECONDARY_R, COLOR_SECONDARY_G, COLOR_SECONDARY_B, 1)
   draw_ellipse(cx, cy-filled_height, width, height);
   cairo_fill(cr)
 
-  cairo_set_source_rgba(cr, 0.933,0.905,0.894,1)
+  cairo_set_source_rgba(cr, COLOR_FONT_R, COLOR_FONT_G, COLOR_FONT_B, 1)
   draw_ellipse(cx, cy-volume_height, width, height);
   cairo_stroke(cr)
 
-  cairo_set_source_rgba(cr, 0.784, 0.431, 0.267, 1)
+  cairo_set_source_rgba(cr, COLOR_PRIMARY_R, COLOR_PRIMARY_G, COLOR_PRIMARY_B, 1)
   draw_ellipse(cx, cy-volume_height, width, height);
   cairo_fill(cr)
 
-  cairo_set_source_rgba(cr, 0.933,0.905,0.894,1)
+  cairo_set_source_rgba(cr, COLOR_FONT_R, COLOR_FONT_G, COLOR_FONT_B, 1)
   cairo_move_to(cr, cx, cy + 40)
   cairo_show_text(cr, name)
   cairo_stroke(cr)
