@@ -18,7 +18,6 @@ conky.config = {
   own_window_argb_value = 0,
   draw_graph_borders=false,
   minimum_width = 1680, minimum_height = 1050,
-  maximum_width = 1680,
   alignment = 'top_left',
   gap_x = 0,
   gap_y = 0,
