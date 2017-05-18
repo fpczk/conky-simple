@@ -30,6 +30,10 @@ function init_cairo()
 
   cairo_select_font_face(cr, font, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL)
   cairo_set_source_rgba(cr, COLOR_FONT_R, COLOR_FONT_G, COLOR_FONT_B, 1)
+
+  WINDOW_WIDTH = conky_window.width
+  WINDOW_HEIGHT = conky_window.height
+
   return true
 end
 
@@ -39,14 +43,14 @@ function conky_main()
   end
 
   -- TIME
-  cairo_set_font_size(cr, 130)
-  cairo_move_to(cr, 644, 230)
+  cairo_set_font_size(cr, 0.077 * WINDOW_WIDTH)
+  cairo_move_to(cr, 0.381 * WINDOW_WIDTH, 0.217 * WINDOW_HEIGHT)
   cairo_show_text(cr, conky_parse("${time %H:%M}"))
   cairo_stroke(cr)
   
   -- DATE
-  cairo_set_font_size(cr, 27)
-  cairo_move_to(cr, 664, 280)
+  cairo_set_font_size(cr, 0.016 * WINDOW_WIDTH)
+  cairo_move_to(cr, 0.393 * WINDOW_WIDTH, 0.264 * WINDOW_HEIGHT)
   local time_str = string.format('%-12s', conky_parse("${time %A,}"))..conky_parse("${time %d.%m.%Y}")
   cairo_show_text(cr, time_str)
   cairo_stroke(cr)
@@ -54,8 +58,8 @@ function conky_main()
   -- CPU GRAPH
   -- Non-linear (sqrt instead) so graph area approximatly matches usage
   
-  local cx,cy = 240,585
-  local radius = 110
+  local cx,cy = 0.142 * WINDOW_WIDTH, 0.552 * WINDOW_HEIGHT
+  local radius = 0.065 * WINDOW_WIDTH
   local half_radius = 0.05 + radius * math.sqrt(0.5) * 0.95
 
   cairo_set_source_rgba(cr, COLOR_PRIMARY_R, COLOR_PRIMARY_G, COLOR_PRIMARY_B, 1)
@@ -98,14 +102,14 @@ function conky_main()
   -- PROCESSES
   
   cairo_set_source_rgba(cr, COLOR_FONT_R, COLOR_FONT_G, COLOR_FONT_B, 1)
-  cairo_set_font_size(cr, 12)
+  cairo_set_font_size(cr, 0.011 * WINDOW_HEIGHT)
   local ps_str = conky_parse("${exec ps -Ao comm,pcpu,%mem  --sort=-pcpu | head -n 15}")
   local processes = {}
   for line in string.gmatch(ps_str, '([^\n]+)') do
     table.insert(processes, line)
   end
   for line = 1,table.getn(processes) do
-    cairo_move_to(cr, 360, 470 + line * 15)
+    cairo_move_to(cr, 0.213 * WINDOW_WIDTH, 0.443 * WINDOW_HEIGHT + line * 0.014 * WINDOW_HEIGHT)
     cairo_show_text(cr, processes[line])
   end
   cairo_stroke(cr)
@@ -119,8 +123,8 @@ function conky_main()
   local rows = 5
   local perc = 0.0
   local perc_incr = 100.0 / 40.0
-  local cx,cy = 720,510
-  local grid_width = 36
+  local cx,cy = 0.426 * WINDOW_WIDTH, 0.481 * WINDOW_HEIGHT
+  local grid_width = 0.021 * WINDOW_WIDTH
   for i = 1,40 do
     if (memperc > perc) then
       cairo_set_source_rgba(cr, COLOR_PRIMARY_R, COLOR_PRIMARY_G, COLOR_PRIMARY_B, 1)
@@ -151,8 +155,8 @@ function conky_fs_main()
     return
   end
 
-  local offset = 1160
-  local gap = 90
+  local offset = 0.686 * WINDOW_WIDTH
+  local gap = 0.053 * WINDOW_WIDTH
 
   draw_volume("     /", tonumber(conky_parse("${fs_used_perc /}")) , offset)
   draw_volume("   media", tonumber(conky_parse("${fs_used_perc /media/hdd/}")) , offset + gap)
@@ -180,11 +184,11 @@ function conky_fs_main()
 end
 
 function draw_volume(name, used, cx)
-  local cy = 646
-  local width,height = 65,15
-  local volume_height = 140
+  local cy = 0.609 * WINDOW_HEIGHT
+  local width,height = 0.038 * WINDOW_WIDTH, 0.014 * WINDOW_HEIGHT
+  local volume_height = 0.132 * WINDOW_HEIGHT
   local filled_height = volume_height * used / 100
-  local line_width = 5
+  local line_width = 0.003 * WINDOW_WIDTH
 
   cairo_set_line_width(cr, line_width)
 
@@ -234,7 +238,7 @@ function draw_volume(name, used, cx)
   cairo_fill(cr)
 
   cairo_set_source_rgba(cr, COLOR_FONT_R, COLOR_FONT_G, COLOR_FONT_B, 1)
-  cairo_move_to(cr, cx, cy + 40)
+  cairo_move_to(cr, cx, cy + 0.038 * WINDOW_HEIGHT)
   cairo_show_text(cr, name)
   cairo_stroke(cr)
 end
